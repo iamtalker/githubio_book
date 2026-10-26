@@ -53,6 +53,7 @@ GitHub Pages에 올리는 도구. 사이트 구조는 **서재 → 책 → 대�
 - 점(`.`)이나 밑줄(`_`)로 시작하는 파일/폴더는 무시한다.
 - 4단계보다 깊은 폴더는 "폴더 - 글" 제목으로 펼쳐진다.
 
+책에 대분류(또는 글)가 하나뿐이면 서재 첫 화면과 상단 메뉴가 목차를 건너뛰고 곧바로 그 글/장으로 연결된다.
 책을 지우려면 소스 파일/폴더만 지우면 된다 (다음 빌드에서 산출물도 정리됨).
 반대로 **소스가 등록되어 있지 않은 책은 다음 빌드에서 사이트에서 사라진다**는 점에 주의한다.
 
@@ -67,6 +68,23 @@ GitHub Pages에 올리는 도구. 사이트 구조는 **서재 → 책 → 대�
 5. **끝** — 저장한다. 그다음 [사이트에 올리기]를 하면 1~2분 뒤 글 아래에 댓글창이 나타난다.
 
 (전체 설정 창의 "댓글" 항목에서 값을 직접 고칠 수도 있다.)
+
+GitHub 의 Discussions 에는 글마다 토론이 하나씩 생기고, 제목은 **글 주소를 풀어 쓴 한글**(`책이름/글이름`)이다.
+(giscus 기본 방식은 `%EB%8B%A8…` 같은 인코딩 글자로 만들어서 한글 주소가 읽기 어렵다.) 글 파일 이름이나 책 이름을 바꾸면
+주소가 바뀌어 기존 토론과 이어지지 않으니, 이미 댓글이 있는 글은 GitHub 에서 토론 제목도 새 주소에 맞게 바꿔 준다.
+
+### 새 댓글 알림 (🔔)
+
+사이트 상단 바의 🔔이 최근 댓글 20개를 보여 주고, 아직 안 본 댓글 수를 배지로 표시한다. 항목을 누르면 그 글로
+이동하고, 옆의 ↗ 는 GitHub 에서 답글을 달 수 있는 곳으로 간다. **[모두 읽음]**, 알림별 **✕**, **[모두 지우기]** 는
+이 브라우저에만 기억된다(알림 목록만 비울 뿐 GitHub 의 댓글은 그대로다 — 댓글 삭제는 GitHub 에서 해당 댓글의 `⋯` → Delete).
+
+- 댓글이 달리면 `.github/workflows/comments.yml` 이 돌아 최근 댓글 목록(`recent-comments.json`)만 `comments-data`
+  브랜치에 갱신한다. **사이트를 다시 만들지 않으므로** 보통 1분 안에 반영되고, 🔔 은 방문할 때마다 이 파일을 읽어 온다.
+- 기본값은 **나에게만 보임**이다. 주소 끝에 `?admin=1` 을 붙여 한 번 접속(`https://아이디.github.io/?admin=1`)하면
+  그 브라우저에서 🔔 이 나타난다. 모든 방문자에게 보이려면 `site.json` 의 `"commentBell"` 을 `"all"`, 끄려면 `"off"`.
+- 댓글 저장소가 **공개**여야 하고, 알림은 사이트를 열어야 확인된다(메일/푸시는 아니다 — 바로 받으려면 GitHub 저장소의
+  Watch → Discussions 를 켠다).
 
 주의: 업로드용 "저장소 주소"는 `https://github.com/아이디/저장소이름.git`(전체 주소), 댓글의 "댓글 저장소"는 `아이디/저장소이름` 으로 형식이 다르다.
 
@@ -85,7 +103,7 @@ GitHub Pages에 올리는 도구. 사이트 구조는 **서재 → 책 → 대�
 - `tools/build_library.py` — 서재 첫 페이지(`docs/index.md`) 생성. `tools/publish.py` — commit + push.
 - `tools/make_release.py` — 책·개인 설정을 뺀 도구 사본을 배포용 저장소에 올린다.
 - `docs/.vitepress/config.mjs` — `site.json`/`books.json`/`sidebar.json`으로 nav·사이드바 구성.
-- `.github/workflows/deploy.yml` — `main`에 push되면 빌드 후 Pages 배포.
+- `.github/workflows/deploy.yml` — `main`에 push되면 빌드 후 Pages 배포. `.github/workflows/comments.yml` + `.github/scripts/recent_comments.py` — 새 댓글 알림용 목록 갱신. `docs/.vitepress/theme/CommentBell.vue` — 🔔.
 
 ## 도구만 따로 배포하기
 

@@ -3,6 +3,7 @@
   "tagline": "",
   "description": "",
   "lang": "ko-KR",
+  "commentBell": "owner",
   "giscus": {
     "repo": "",
     "repoId": "",
